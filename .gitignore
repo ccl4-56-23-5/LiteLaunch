@@ -1,4 +1,4 @@
-﻿/tools/zig/
+/tools/zig/
 /temp/
 /outputs/
 *.exe
@@ -17,4 +17,8 @@
 # The only committed INI is a synthetic QA migration fixture.
 *.ini
 *.bak
-!sources/LiteLaunch/1.0.22/presets/LiteLaunch.ini
+!sources/LiteLaunch/1.0.25/presets/LiteLaunch.ini
+
+**/reference/
+*.qka
+**/qa/*.png

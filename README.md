@@ -1,36 +1,45 @@
-﻿# LiteLaunch（轻启）安装版
+﻿# LiteLaunch（轻启）
 
-Windows x64中键启动面板与EVER批量重命名工具。仅发布安装版。
+Windows x64 中键启动面板，支持可选插件。当前正式版 **1.0.25**，已由维护者于2026-10-22明确测试通过；仅发布安装版。
 
-## 下载和覆盖安装
+## 下载与安装
 
-从[最新正式版本](https://github.com/ccl4-56-23-5/LiteLaunch/releases/latest)下载LiteLaunch-Setup-1.0.22-x64.exe并运行。安装包识别当前运行的LiteLaunch、原安装记录（兼容32/64位注册表）和现有桌面/开始菜单快捷方式。找到有效旧版后自动沿用原目录、跳过目录选择，并在准备安装页显示旧应用版本和覆盖路径；不需要先卸载。首次安装才选择目录。默认当前用户安装，提供快捷方式、自启动选项和Windows卸载入口。
+从[最新正式版本](https://github.com/ccl4-56-23-5/LiteLaunch/releases/latest)下载LiteLaunch-Setup-1.0.25-x64.exe。已有安装时自动识别原目录并进入覆盖安装，保留应用列表、指针恢复记录与重命名历史。首次安装可设置目录、快捷方式及开机启动。
 
-配置、应用列表、EVER设置与历史保存在%LOCALAPPDATA%\LiteLaunch；安装包不包含真实用户配置，覆盖安装不会替换这些文件。更新前保存正在编辑的重命名。
+安装包SHA-256：`b89d7122d05f71d3210f5aa9319b5f53a972989f574d6286867ec2bbc5a17464`。
 
-1.0.22已由维护者明确确认测试通过。正式安装包SHA-256：4930222ADC5C886374921CCDFDAD4C5DFF7A439BCF8134E07D68F9A725CE4C86。Release同时提供源码ZIP、SHA256SUMS.txt和第三方许可证。
+## 插件
 
-## 应用内GitHub更新
+第一行四格可分别分配、清空插件；软件区第一格固定为使用Windows系统图标的控制面板。打开面板右键“插件管理”，按需下载、启动、移除或更新。主程序不捆绑插件程序，各组件使用独立版本。
 
-面板右键“检查GitHub更新…”，填写GitHub项目地址或账号/仓库，例如https://github.com/ccl4-56-23-5/LiteLaunch。设置会保存，后续只查询指定仓库的稳定Release。
+| 插件 | 版本 | 功能 |
+| --- | --- | --- |
+| 批量重命名 | 1.0.0 | 顺序规则队列、原名/新名预览、手工微调、全文/选区替换、编号与EXIF/创建/修改时间、预设及撤回 |
+| 鼠标指针样式 | 1.0.1 | 仅后装方案，真实缩略图、17角色预览、ANI动画、悬停试用、应用和恢复上一套 |
 
-有更新时下载匹配版本的LiteLaunch-Setup-<版本>-x64.exe，校验GitHub生成的SHA-256、大小、产品及版本，再确认打开正常覆盖安装向导，沿用当前安装目录及开机启动选项。保留用户确认与可见向导，不是无感静默更新。1.0.21使用旧单EXE协议，请先手动安装1.0.22完成迁移。
+也可下载本Release的插件EXE后通过“本地安装”安装。关闭旧插件窗口再启动新版。把插件EXE与Setup放在同一目录，安装后点击对应槽位，可校验并安装/更新该本地插件后启动。已有旧版本不会阻止识别同目录新版。
 
-## 功能
+所有下载校验本仓库GitHub附件SHA-256、大小、产品和版本；每次启动再次校验已安装文件。插件目录中每项可指向独立Release，插件专用发布不会改变主程序latest。指针1.0.1兼容主程序1.0.24及以上。
 
-- 中键呼出启动面板；拖入.lnk解析真实应用目标、参数和图标；支持主题、自定义缩放、黑名单和登录启动。
-- EVER重命名支持全文/选区查找替换、批量预览、撤销和事务校验。点击主窗口确定后才修改真实文件名。
-- 编号模板（Alt+N）：xxxx-{num}、起始1、位数3，对JPG生成xxxx-001.jpg。支持起始数字、步长和1—18位补零；自动保留扩展名。
-- 字段{name}/{num}/{taken}/{created}/{modified}/{parent}/{now}可组合；日期示例{taken:yyyyMMdd_HHmmss}。缺少EXIF时提示并保留整批原文。
+## 本版修复
 
-## 构建和维护
+- 修复插件管理首个窗口被隐藏造成点击无反应，保持PowerShell控制台隐藏、交互窗口正常显示。
+- 修复本机Windows拒绝旧指针刷新参数组合的问题，真实切换及原方案完整恢复已验证。
+- 指针窗口统一为LiteLaunch卡片、字体、主题与缩放样式，并显示实际安装指针的静态和动态预览。
+- 重命名通过规则队列预览，只有点击执行才修改真实文件；保留原设置、模板和后悔药数据。
 
-环境：Windows x64、PowerShell、Zig0.15.2、Inno Setup6及Windows自带.NET Framework csc.exe。Zig下载路径见tools/README.md，安装Inno Setup后运行：
+## 主程序GitHub更新
+
+面板右键“检查GitHub更新”，填写本项目地址；更新器校验稳定Release安装包后，经用户确认打开正常覆盖安装向导。主程序仅提供安装版更新，保留确认和可见安装流程。
+
+## 构建与维护
+
+Windows x64、PowerShell7及以上（构建）、Zig0.15.2、Inno Setup6和系统.NET Framework。Zig解压到tools/zig/zig-x86_64-windows-0.15.2，运行：
 
 ```powershell
 .\build.ps1 -InnoCompiler 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe'
 ```
 
-输出outputs/LiteLaunch/1.0.22/LiteLaunch-Setup-1.0.22-x64.exe。内部LiteLaunch.exe只作为构建/安装载荷，不发布免安装产品。由于编译时间戳等因素，重建包摘要不保证与正式附件相同。
+源码位于[sources/LiteLaunch/1.0.25](sources/LiteLaunch/1.0.25)，[开发文档](sources/LiteLaunch/1.0.25/开发文档.md)说明插件版本、校验、验证边界与发布规范。输出在outputs/LiteLaunch/1.0.25；主程序内部EXE仅为安装载荷，不另发免安装产品。
 
-源码位于sources/LiteLaunch/1.0.22；安装识别、更新协议和验证说明见[维护文档](sources/LiteLaunch/1.0.22/开发文档.md)。Scintilla5.6.6和NanoSVG许可证见THIRD-PARTY-NOTICES.md。新版本必须由维护者明确确认测试通过后才发布。
+第三方许可证见[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。未分发任何第三方指针包，未包含原Quicker动作导出或真实用户配置。新版本须维护者明确测试通过才可发布；重建后的包摘要不保证与已验收附件相同。
