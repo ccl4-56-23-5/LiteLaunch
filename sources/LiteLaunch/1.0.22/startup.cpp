@@ -211,7 +211,7 @@ static HRESULT registeredEnabled(ITaskFolder *folder,LPCWSTR name,LPCWSTR sid,bo
     *enabled=value!=VARIANT_FALSE;return S_OK;
 }
 static HRESULT createTask(ITaskService *service,ITaskFolder *folder,LPCWSTR name,LPCWSTR sid){
-    Bstr taskName(name),userSid(sid),author(owner),delay(L"PT20S"),limit(L"PT0S"),restart(L"PT1M"),arguments(L"--hidden"),description(L"LiteLaunch: current-user delayed logon startup, version 1.0.21");
+    Bstr taskName(name),userSid(sid),author(owner),delay(L"PT20S"),limit(L"PT0S"),restart(L"PT1M"),arguments(L"--hidden"),description(L"LiteLaunch: current-user delayed logon startup, version 1.0.22");
     if(!taskName.p||!userSid.p||!author.p||!delay.p||!limit.p||!restart.p||!arguments.p||!description.p)return E_OUTOFMEMORY;
     ComPtr<IRegisteredTask> oldTask;HRESULT hr=folder->GetTask(taskName.p,oldTask.out());
     if(SUCCEEDED(hr))CHECK_HR(owned(oldTask.p,sid));else if(!missing(hr))return hr;

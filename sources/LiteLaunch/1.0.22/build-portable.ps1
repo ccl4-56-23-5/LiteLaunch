@@ -1,0 +1,1 @@
+﻿throw 'LiteLaunch仅交付安装版。请运行build-installer.ps1；build.ps1仅生成安装包内部应用文件。'

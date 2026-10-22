@@ -8,8 +8,8 @@
 106 RCDATA "icons\\codex-official-legacy.png"
 
 1 VERSIONINFO
-FILEVERSION 1,0,21,0
-PRODUCTVERSION 1,0,21,0
+FILEVERSION 1,0,22,0
+PRODUCTVERSION 1,0,22,0
 FILEFLAGSMASK 0x3fL
 FILEFLAGS 0x0L
 FILEOS 0x40004L
@@ -21,9 +21,9 @@ BEGIN
         BLOCK "080404b0"
         BEGIN
             VALUE "FileDescription", "LiteLaunch EVER rename edition\0"
-            VALUE "FileVersion", "1.0.21\0"
+            VALUE "FileVersion", "1.0.22\0"
             VALUE "ProductName", "LiteLaunch\0"
-            VALUE "ProductVersion", "1.0.21\0"
+            VALUE "ProductVersion", "1.0.22\0"
             VALUE "OriginalFilename", "LiteLaunch.exe\0"
         END
     END

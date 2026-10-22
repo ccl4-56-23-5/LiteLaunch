@@ -3,7 +3,7 @@ $ErrorActionPreference = 'Stop'
 . "$PSScriptRoot\set-build-cache.ps1"
 $project = Split-Path -Parent $PSScriptRoot
 $workspace = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $project))
-if (-not $OutputDirectory) { $OutputDirectory = Join-Path $workspace 'temp\LiteLaunch-build-1.0.21' }
+if (-not $OutputDirectory) { $OutputDirectory = Join-Path $workspace 'temp\LiteLaunch-build-1.0.22' }
 $compiler = 'C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe'
 if (-not (Test-Path -LiteralPath $compiler)) { throw 'Windows .NET Framework C# compiler is unavailable.' }
 New-Item -ItemType Directory -Path $OutputDirectory -Force | Out-Null

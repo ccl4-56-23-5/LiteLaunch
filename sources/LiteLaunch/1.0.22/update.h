@@ -15,7 +15,7 @@ static void showGitHubUpdate(HWND owner){
      if(file==INVALID_HANDLE_VALUE)goto failed;BOOL ok=WriteFile(file,data,size,&written,NULL);CloseHandle(file);if(!ok||written!=size)goto failed;}
     if(!GetSystemDirectoryW(powershell,MAX_PATH)||!GetModuleFileNameW(NULL,exe,MAX_PATH))goto failed;
     lstrcatW(powershell,L"\\WindowsPowerShell\\v1.0\\powershell.exe");
-    swprintf(command,sizeof(command)/sizeof(command[0]),L"\"%ls\" -NoProfile -STA -ExecutionPolicy Bypass -File \"%ls\" -ExecutablePath \"%ls\" -CurrentVersion 1.0.21 -OwnerPID %lu",powershell,script,exe,GetCurrentProcessId());
+    swprintf(command,sizeof(command)/sizeof(command[0]),L"\"%ls\" -NoProfile -STA -ExecutionPolicy Bypass -File \"%ls\" -ExecutablePath \"%ls\" -CurrentVersion 1.0.22 -OwnerPID %lu",powershell,script,exe,GetCurrentProcessId());
     {STARTUPINFOW startup={0};PROCESS_INFORMATION process={0};startup.cb=sizeof(startup);startup.dwFlags=STARTF_USESHOWWINDOW;startup.wShowWindow=SW_HIDE;
      if(!CreateProcessW(powershell,command,NULL,NULL,FALSE,CREATE_NO_WINDOW,NULL,folder,&startup,&process))goto failed;
      CloseHandle(process.hThread);CloseHandle(process.hProcess);return;}

@@ -11,7 +11,7 @@ $versionDirectory = Split-Path -Parent $PSScriptRoot
 $workspaceDirectory = [IO.Path]::GetFullPath((Join-Path $versionDirectory '..\..\..'))
 $sourceDirectory = Join-Path $versionDirectory 'vendor\scintilla'
 if (-not $Compiler) { $Compiler = Join-Path $workspaceDirectory 'tools\zig\zig-x86_64-windows-0.15.2\zig.exe' }
-if (-not $OutputDirectory) { $OutputDirectory = Join-Path $workspaceDirectory 'temp\LiteLaunch-build-1.0.21\scintilla' }
+if (-not $OutputDirectory) { $OutputDirectory = Join-Path $workspaceDirectory 'temp\LiteLaunch-build-1.0.22\scintilla' }
 $Compiler = [IO.Path]::GetFullPath($Compiler)
 $OutputDirectory = [IO.Path]::GetFullPath($OutputDirectory)
 if (-not (Test-Path -LiteralPath $Compiler -PathType Leaf)) { throw "Zig compiler not found: $Compiler" }

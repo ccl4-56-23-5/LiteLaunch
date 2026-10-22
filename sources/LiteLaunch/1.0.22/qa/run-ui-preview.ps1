@@ -4,7 +4,7 @@ $ErrorActionPreference = 'Stop'
 $sourceDirectory = Split-Path -Parent $PSScriptRoot
 $workspaceDirectory = [IO.Path]::GetFullPath((Join-Path $sourceDirectory '..\..\..'))
 if (-not $Compiler) { $Compiler = Join-Path $workspaceDirectory 'tools\zig\zig-x86_64-windows-0.15.2\zig.exe' }
-$buildDirectory = Join-Path $workspaceDirectory 'temp\LiteLaunch-build-1.0.21\ui-preview'
+$buildDirectory = Join-Path $workspaceDirectory 'temp\LiteLaunch-build-1.0.22\ui-preview'
 New-Item -ItemType Directory -Path $buildDirectory -Force | Out-Null
 $scintilla = & (Join-Path $PSScriptRoot 'build-scintilla.ps1') -Compiler $Compiler
 $libs = @('-luser32','-lgdi32','-lgdiplus','-lshlwapi','-lshell32','-lole32','-lcomdlg32','-luuid','-ladvapi32','-loleaut32','-lcomctl32','-limm32','-lpropsys','-lversion')

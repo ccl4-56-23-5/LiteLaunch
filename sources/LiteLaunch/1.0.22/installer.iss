@@ -1,13 +1,19 @@
 ﻿[Setup]
 AppId={{AA91BC95-36ED-4203-8942-CC6327501020}
 AppName=轻启 LiteLaunch
-AppVersion=1.0.21
-VersionInfoVersion=1.0.21.0
-VersionInfoProductVersion=1.0.21.0
+AppVersion=1.0.22
+VersionInfoVersion=1.0.22.0
+VersionInfoProductVersion=1.0.22.0
 VersionInfoProductName=LiteLaunch
 VersionInfoDescription=LiteLaunch Setup
 AppPublisher=LiteLaunch
-DefaultDirName={localappdata}\Programs\LiteLaunch
+DefaultDirName={code:GetInstallDir}
+; Resolve legacy and running installations ourselves, including both registry views.
+UsePreviousAppDir=no
+UsePreviousTasks=yes
+UsePreviousGroup=yes
+DisableDirPage=no
+DirExistsWarning=no
 DefaultGroupName=轻启 LiteLaunch
 PrivilegesRequired=lowest
 ArchitecturesAllowed=x64compatible
@@ -16,8 +22,8 @@ DisableProgramGroupPage=yes
 WizardStyle=modern
 SetupIconFile=app.ico
 UninstallDisplayIcon={app}\LiteLaunch.exe
-OutputDir=..\..\..\outputs\LiteLaunch\1.0.21
-OutputBaseFilename=LiteLaunch-Setup-1.0.21-x64
+OutputDir=..\..\..\outputs\LiteLaunch\1.0.22
+OutputBaseFilename=LiteLaunch-Setup-1.0.22-x64
 Compression=lzma2
 SolidCompression=yes
 CloseApplications=yes
@@ -32,12 +38,12 @@ Name: desktopicon; Description: "创建桌面快捷方式"; GroupDescription: "�
 Name: autostart; Description: "开机静默启动（不弹窗、不产生通知）"; GroupDescription: "启动选项："; Flags: unchecked
 
 [Files]
-Source: "..\..\..\temp\LiteLaunch-installer\payload-1.0.21\LiteLaunch.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\..\temp\LiteLaunch-installer\payload-1.0.21\icons\*"; DestDir: "{app}\icons"; Flags: ignoreversion
-Source: "..\..\..\temp\LiteLaunch-installer\payload-1.0.21\*.md"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\..\temp\LiteLaunch-installer\payload-1.0.21\NanoSVG-LICENSE.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\..\temp\LiteLaunch-installer\payload-1.0.22\LiteLaunch.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\..\temp\LiteLaunch-installer\payload-1.0.22\icons\*"; DestDir: "{app}\icons"; Flags: ignoreversion
+Source: "..\..\..\temp\LiteLaunch-installer\payload-1.0.22\*.md"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\..\temp\LiteLaunch-installer\payload-1.0.22\NanoSVG-LICENSE.txt"; DestDir: "{app}"; Flags: ignoreversion
 
-Source: "..\..\..\temp\LiteLaunch-installer\payload-1.0.21\THIRD-PARTY-NOTICES.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\..\temp\LiteLaunch-installer\payload-1.0.22\THIRD-PARTY-NOTICES.txt"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{autoprograms}\轻启 LiteLaunch"; Filename: "{app}\LiteLaunch.exe"; WorkingDir: "{app}"
@@ -50,6 +56,8 @@ Filename: "{app}\LiteLaunch.exe"; Parameters: "--hidden"; Description: "启动�
 Filename: "{app}\LiteLaunch.exe"; Parameters: "--disable-startup"; Flags: runhidden waituntilterminated; RunOnceId: "DisableLiteLaunchStartup"
 
 [Code]
+#include "installer-detection.iss"
+
 procedure CurStepChanged(CurStep: TSetupStep);
 var
   StartupParameter: String;

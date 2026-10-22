@@ -4,7 +4,7 @@ $ErrorActionPreference = 'Stop'
 $sourceDirectory = Split-Path -Parent $PSScriptRoot
 $workspaceDirectory = [IO.Path]::GetFullPath((Join-Path $sourceDirectory '..\..\..'))
 if (-not $Compiler) { $Compiler = Join-Path $workspaceDirectory 'tools\zig\zig-x86_64-windows-0.15.2\zig.exe' }
-$buildDirectory = Join-Path $workspaceDirectory 'temp\LiteLaunch-build-1.0.21\ever-state-qa'
+$buildDirectory = Join-Path $workspaceDirectory 'temp\LiteLaunch-build-1.0.22\ever-state-qa'
 New-Item -ItemType Directory -Path $buildDirectory -Force | Out-Null
 $scintilla = & (Join-Path $PSScriptRoot 'build-scintilla.ps1') -Compiler $Compiler
 $fixtureExe = Join-Path $buildDirectory 'ever_state_test.exe'

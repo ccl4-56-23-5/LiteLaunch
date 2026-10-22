@@ -3,7 +3,7 @@
 $source = Split-Path -Parent $PSScriptRoot
 $workspace = [IO.Path]::GetFullPath("$source\..\..\..")
 $compiler = Join-Path $workspace 'tools\zig\zig-x86_64-windows-0.15.2\zig.exe'
-$build = Join-Path $workspace 'temp\LiteLaunch-build-1.0.21\regression'
+$build = Join-Path $workspace 'temp\LiteLaunch-build-1.0.22\regression'
 New-Item -ItemType Directory -Force -Path $build | Out-Null
 $libs = @('-luser32','-lgdi32','-lgdiplus','-lshlwapi','-lshell32','-lole32','-lcomdlg32','-luuid','-ladvapi32','-loleaut32','-lcomctl32','-limm32','-lpropsys','-lversion')
 $scintilla = & (Join-Path $PSScriptRoot 'build-scintilla.ps1') -Compiler $compiler

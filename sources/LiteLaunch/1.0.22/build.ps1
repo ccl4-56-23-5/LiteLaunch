@@ -1,9 +1,9 @@
-﻿param([string]$Compiler = "$PSScriptRoot\..\..\..\tools\zig\zig-x86_64-windows-0.15.2\zig.exe",[string]$OutputDirectory = "$PSScriptRoot\..\..\..\temp\LiteLaunch-build-1.0.21\app")
+﻿param([string]$Compiler = "$PSScriptRoot\..\..\..\tools\zig\zig-x86_64-windows-0.15.2\zig.exe",[string]$OutputDirectory = "$PSScriptRoot\..\..\..\temp\LiteLaunch-build-1.0.22\app")
 $ErrorActionPreference = 'Stop'
 . "$PSScriptRoot\qa\set-build-cache.ps1"
 $output = [IO.Path]::GetFullPath($OutputDirectory)
 New-Item -ItemType Directory -Force $output | Out-Null
-$build = [IO.Path]::GetFullPath("$PSScriptRoot\..\..\..\temp\LiteLaunch-build-1.0.21")
+$build = [IO.Path]::GetFullPath("$PSScriptRoot\..\..\..\temp\LiteLaunch-build-1.0.22")
 New-Item -ItemType Directory -Force $build | Out-Null
 $scintillaBuild = & "$PSScriptRoot\qa\build-scintilla.ps1" -Compiler $Compiler
 & "$PSScriptRoot\qa\build-ever-regex.ps1" -OutputDirectory $build | Out-Null
@@ -25,7 +25,7 @@ foreach($module in @('ever_rules','ever_regex')) {
 & $Compiler c++ -target x86_64-windows-gnu -std=c++17 -Os -s -fno-exceptions -fno-rtti -municode '-Wl,--subsystem,windows' "$PSScriptRoot\glass.cpp" "$PSScriptRoot\startup.cpp" "$build\rename.o" "$build\ever_rules.o" "$build\ever_regex.o" $scintillaBuild.Archive "$build\main.o" "$build\app.res" -o "$output\LiteLaunch.exe" -luser32 -lgdi32 -lgdiplus -lshlwapi -lshell32 -lole32 -lcomdlg32 -luuid -ladvapi32 -loleaut32 -lcomctl32 -limm32 -lpropsys -lversion
 if ($LASTEXITCODE -ne 0) { throw 'Compilation failed' }
 Copy-Item -LiteralPath "$PSScriptRoot\README.md" -Destination "$output\使用说明.md" -Force
-Copy-Item -LiteralPath "$PSScriptRoot\开发文档.md" -Destination "$output\开发文档.md" -Force
+# Developer maintenance files are not installed.
 Copy-Item -LiteralPath "$PSScriptRoot\安装使用说明.md" -Destination "$output\安装使用说明.md" -Force
 New-Item -ItemType Directory -Force "$output\icons" | Out-Null
 foreach($icon in @('logo.svg','pin.svg','gear.svg','close.svg','plus.svg','codex-official-legacy.png')) { Copy-Item -LiteralPath "$PSScriptRoot\icons\$icon" -Destination "$output\icons\$icon" -Force }

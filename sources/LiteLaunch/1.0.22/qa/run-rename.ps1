@@ -3,7 +3,7 @@ $ErrorActionPreference = 'Stop'
 . "$PSScriptRoot\set-build-cache.ps1"
 $source = Split-Path -Parent $PSScriptRoot
 $workspace = [IO.Path]::GetFullPath("$source\..\..\..")
-$build = Join-Path $workspace 'temp\LiteLaunch-build-1.0.21\rename-qa'
+$build = Join-Path $workspace 'temp\LiteLaunch-build-1.0.22\rename-qa'
 New-Item -ItemType Directory -Force -Path $build | Out-Null
 $exe = Join-Path $build 'rename_test.exe'
 $snapshot = Join-Path $build 'rename-ui.bmp'
