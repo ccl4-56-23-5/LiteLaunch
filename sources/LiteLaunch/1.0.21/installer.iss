@@ -2,6 +2,10 @@
 AppId={{AA91BC95-36ED-4203-8942-CC6327501020}
 AppName=轻启 LiteLaunch
 AppVersion=1.0.21
+VersionInfoVersion=1.0.21.0
+VersionInfoProductVersion=1.0.21.0
+VersionInfoProductName=LiteLaunch
+VersionInfoDescription=LiteLaunch Setup
 AppPublisher=LiteLaunch
 DefaultDirName={localappdata}\Programs\LiteLaunch
 DefaultGroupName=轻启 LiteLaunch
@@ -32,6 +36,8 @@ Source: "..\..\..\temp\LiteLaunch-installer\payload-1.0.21\LiteLaunch.exe"; Dest
 Source: "..\..\..\temp\LiteLaunch-installer\payload-1.0.21\icons\*"; DestDir: "{app}\icons"; Flags: ignoreversion
 Source: "..\..\..\temp\LiteLaunch-installer\payload-1.0.21\*.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\..\temp\LiteLaunch-installer\payload-1.0.21\NanoSVG-LICENSE.txt"; DestDir: "{app}"; Flags: ignoreversion
+
+Source: "..\..\..\temp\LiteLaunch-installer\payload-1.0.21\THIRD-PARTY-NOTICES.txt"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{autoprograms}\轻启 LiteLaunch"; Filename: "{app}\LiteLaunch.exe"; WorkingDir: "{app}"

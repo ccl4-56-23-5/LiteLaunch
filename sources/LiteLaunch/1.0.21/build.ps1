@@ -26,7 +26,7 @@ foreach($module in @('ever_rules','ever_regex')) {
 if ($LASTEXITCODE -ne 0) { throw 'Compilation failed' }
 Copy-Item -LiteralPath "$PSScriptRoot\README.md" -Destination "$output\使用说明.md" -Force
 Copy-Item -LiteralPath "$PSScriptRoot\开发文档.md" -Destination "$output\开发文档.md" -Force
-Copy-Item -LiteralPath "$PSScriptRoot\免安装使用说明.md" -Destination "$output\免安装使用说明.md" -Force
+Copy-Item -LiteralPath "$PSScriptRoot\安装使用说明.md" -Destination "$output\安装使用说明.md" -Force
 New-Item -ItemType Directory -Force "$output\icons" | Out-Null
 foreach($icon in @('logo.svg','pin.svg','gear.svg','close.svg','plus.svg','codex-official-legacy.png')) { Copy-Item -LiteralPath "$PSScriptRoot\icons\$icon" -Destination "$output\icons\$icon" -Force }
 Copy-Item -LiteralPath "$PSScriptRoot\vendor\LICENSE.txt" -Destination "$output\NanoSVG-LICENSE.txt" -Force
