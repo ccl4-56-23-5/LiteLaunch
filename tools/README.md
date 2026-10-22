@@ -1,0 +1,1 @@
+﻿Download Zig0.15.2 for Windows x64 from https://ziglang.org/download/0.15.2/zig-x86_64-windows-0.15.2.zip and extract into tools/zig/zig-x86_64-windows-0.15.2. Do not commit the toolchain.

@@ -1,0 +1,20 @@
+﻿/tools/zig/
+/temp/
+/outputs/
+*.exe
+*.dll
+*.o
+*.a
+*.res
+*.log
+.env
+.env.*
+.git-credentials
+**/.zig-cache/
+**/zig-cache/
+**/Rename/
+**/Updates/
+# The only committed INI is a synthetic QA migration fixture.
+*.ini
+*.bak
+!sources/LiteLaunch/1.0.21/presets/LiteLaunch.ini

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="100%" y2="100%"><stop stop-color="#86eee1"/><stop offset=".5" stop-color="#22bdb4"/><stop offset="1" stop-color="#07867f"/></linearGradient><linearGradient id="tile" x1="0" y1="0" x2="0" y2="100%"><stop stop-color="#ffffff"/><stop offset="1" stop-color="#c8fff5"/></linearGradient></defs>
+<path d="M128 8C226 8 248 30 248 128S226 248 128 248 8 226 8 128 30 8 128 8Z" fill="url(#bg)"/>
+<path d="M42 93C42 56 56 40 96 34" fill="none" stroke="#d5fff6" stroke-opacity=".5" stroke-width="3" stroke-linecap="round"/>
+<g fill="#075f63" opacity=".18"><rect x="54" y="76" width="59" height="59" rx="17"/><rect x="54" y="146" width="59" height="59" rx="17"/><rect x="125" y="146" width="59" height="59" rx="17"/></g>
+<g fill="url(#tile)"><rect x="54" y="68" width="59" height="59" rx="17"/><rect x="54" y="138" width="59" height="59" rx="17"/><rect x="125" y="138" width="59" height="59" rx="17"/>
+<path d="M144 44H189Q204 44 204 59V104Q204 111 197 111Q194 111 191 108L177 94 146 125Q140 131 134 125L123 114Q117 108 123 102L154 71 140 57Q133 50 140 45Z"/></g></svg>

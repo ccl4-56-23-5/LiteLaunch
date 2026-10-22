@@ -1,0 +1,3 @@
+﻿# Release gate
+
+Do not push commits/tags, upload assets or publish a release for a new version until the user explicitly confirms that exact version passed personal testing. Automated checks do not replace that confirmation. Preserve third-party licenses, exclude user configuration, credentials, runtime logs and build caches. Verify downloaded source and release asset hashes before cleaning local older ordinary versions; preserve registered baselines.
