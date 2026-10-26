@@ -10,6 +10,7 @@ if($accepted.version -ne '1.0.27' -or $accepted.installerSHA256 -ne (Get-FileHas
 if(@(git -C $repo status --porcelain).Count){throw 'Git worktree is not clean'}
 if((git -C $repo remote get-url origin).Trim() -cne 'https://github.com/ccl4-56-23-5/LiteLaunch.git'){throw 'Unexpected remote'}
 $head=(git -C $repo rev-parse HEAD).Trim()
+if($accepted.publishedSourceCommit -ne $head -or $accepted.publishedSourceZIPHash -ne (Get-FileHash -LiteralPath (Join-Path $source 'LiteLaunch-source-v1.0.27.zip')).Hash){throw 'Final source archive has not been verified for this commit'}
 if((git -C $repo rev-parse 'v1.0.27^{}').Trim() -ne $head){throw 'Tag does not match HEAD'}
 $remote=GitHubRequest '/repos/ccl4-56-23-5/LiteLaunch/git/ref/heads/main'
 $parent=(git -C $repo rev-parse 'HEAD^').Trim()

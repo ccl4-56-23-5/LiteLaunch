@@ -15,10 +15,15 @@ if(Test-Path -LiteralPath $old26){
  $oldRepo=Join-Path $old26 'repository'
  git -C $oldRepo diff --quiet
  if($LASTEXITCODE -ne 0 -or @(git -C $oldRepo ls-files --others --exclude-standard).Count){throw 'Old candidate has unreviewed changes'}
- foreach($line in Get-Content -LiteralPath (Join-Path $old26 'SOURCE-SHA256SUMS.txt')){
-  $hash=$line.Substring(0,64);$relative=$line.Substring(66)
-  if((Get-FileHash -LiteralPath (Join-Path $oldRepo $relative)).Hash -ine $hash){throw ('Old candidate differs from its prepared archive: '+$relative)}
- }
+ # Legacy text manifests used ASCII and cannot represent Chinese filenames.
+ # Compare the actual original ZIP entries instead of guessing those names.
+ Add-Type -AssemblyName System.IO.Compression.FileSystem
+ $archive=[IO.Compression.ZipFile]::OpenRead((Join-Path $old26 'LiteLaunch-source-v1.0.26.zip'))
+ try{foreach($entry in $archive.Entries|Where-Object Name){
+  $stream=$entry.Open();$sha=[Security.Cryptography.SHA256]::Create()
+  try{$hash=([BitConverter]::ToString($sha.ComputeHash($stream))).Replace('-','')}finally{$stream.Dispose();$sha.Dispose()}
+  if((Get-FileHash -LiteralPath (Join-Path $oldRepo $entry.FullName)).Hash -ne $hash){throw ('Old candidate differs from its prepared archive: '+$entry.FullName)}
+ }}finally{$archive.Dispose()}
 }
 $relative=@('sources\LiteLaunch\1.0.25','sources\LiteLaunch\1.0.26','outputs\LiteLaunch\1.0.25','outputs\LiteLaunch\1.0.26','temp\LiteLaunch-build-1.0.26','temp\LiteLaunch-build-1.0.27','temp\LiteLaunch-installer\payload-1.0.26','temp\LiteLaunch-installer\payload-1.0.27','temp\LiteLaunch-publish-1.0.27','temp\LiteLaunch-installer\finalize-records.ps1','temp\LiteLaunch-installer\prepare-release22.ps1','temp\LiteLaunch-installer\publish22.ps1','temp\LiteLaunch-installer\record-detection-fix.ps1','temp\LiteLaunch-installer\recycle-obsolete.ps1')
 $processes=@(Get-CimInstance Win32_Process)

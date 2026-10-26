@@ -29,6 +29,11 @@ foreach($name in $expected){
 }
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $tracked=@(((git -C $repo ls-files -z) -join "`n").Split([char]0)|Where-Object {$_})
+$tree=@{}
+foreach($entry in (((git -C $repo ls-tree -rz --full-tree HEAD) -join "`n").Split([char]0)|Where-Object {$_})){
+ if($entry -notmatch '^\d{6} blob ([a-f0-9]{40})\t(.+)$'){throw 'Unexpected source tree entry'}
+ $tree[$Matches[2]]=$Matches[1]
+}
 function Assert-SourceArchive([string]$Zip){
  $archive=[IO.Compression.ZipFile]::OpenRead($Zip)
  try{
@@ -36,9 +41,14 @@ function Assert-SourceArchive([string]$Zip){
   foreach($entry in $files){
    $relative=$entry.FullName.Substring($entry.FullName.IndexOf('/')+1)
    if($relative -notin $tracked){throw ('Unexpected archive path: '+$relative)}
-   $stream=$entry.Open();$sha=[Security.Cryptography.SHA256]::Create()
-   try{$hash=([BitConverter]::ToString($sha.ComputeHash($stream))).Replace('-','')}finally{$stream.Dispose();$sha.Dispose()}
-   if($hash -ne (Get-FileHash -LiteralPath (Join-Path $repo $relative)).Hash){throw ('Source archive bytes differ: '+$relative)}
+   $stream=$entry.Open();$memory=New-Object IO.MemoryStream
+   try{$stream.CopyTo($memory);$bytes=$memory.ToArray()}finally{$stream.Dispose();$memory.Dispose()}
+   $header=[Text.Encoding]::ASCII.GetBytes(('blob '+$bytes.Length+[char]0))
+   $payload=New-Object byte[] ($header.Length+$bytes.Length)
+   [Array]::Copy($header,0,$payload,0,$header.Length);[Array]::Copy($bytes,0,$payload,$header.Length,$bytes.Length)
+   $sha=[Security.Cryptography.SHA1]::Create()
+   try{$blob=([BitConverter]::ToString($sha.ComputeHash($payload))).Replace('-','').ToLowerInvariant()}finally{$sha.Dispose()}
+   if($blob -ne $tree[$relative]){throw ('Source archive differs from committed Git bytes: '+$relative)}
   }
  }finally{$archive.Dispose()}
 }
