@@ -1,0 +1,27 @@
+﻿{
+  "plugins": [
+    {
+      "id": "batch-renamer",
+      "name": "批量重命名",
+      "version": "1.0.1",
+      "minHostVersion": "1.0.24",
+      "releaseTag": "v1.0.30",
+      "asset": "LiteLaunch-Plugin-BatchRenamer-1.0.1-x64.exe",
+      "productName": "LiteLaunch Batch Renamer",
+      "description": "EVER简易处理、规则队列、清空名称、批量文件夹与安装目录预设",
+      "sha256": "073988BA9E7A10F89A87A907EA291D3AF3AED87B0AFF386E8ABA71C8E94C0A2A"
+    },
+    {
+      "id": "cursor-switcher",
+      "name": "鼠标指针样式",
+      "version": "1.0.1",
+      "minHostVersion": "1.0.24",
+      "releaseTag": "v1.0.30",
+      "asset": "LiteLaunch-Plugin-CursorSwitcher-1.0.1-x64.exe",
+      "productName": "LiteLaunch Cursor Switcher",
+      "description": "仅显示后装方案，快速切换与恢复上一套",
+      "sha256": "3D50BED51228C903D262A97B476473D7DE208A487E63D79422F237F493BCBD2D"
+    }
+  ],
+  "schemaVersion": 1
+}
