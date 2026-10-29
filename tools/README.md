@@ -1,1 +1,2 @@
 ﻿Download Zig0.15.2 for Windows x64 from https://ziglang.org/download/0.15.2/zig-x86_64-windows-0.15.2.zip and extract into tools/zig/zig-x86_64-windows-0.15.2. Do not commit the toolchain.
+Batch Renamer 1.0.2 also requires the Free Pascal 3.2.2 Win32 compiler. The build expects tools/fpc/3.2.2/{app}/bin/i386-win32/fpc.exe. See the independent plugin README for the official download and extraction instructions.
