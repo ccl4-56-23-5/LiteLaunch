@@ -2,7 +2,7 @@
 . "$PSScriptRoot\set-build-cache.ps1"
 $source=Split-Path -Parent $PSScriptRoot
 $workspace=[IO.Path]::GetFullPath("$source\..\..\..")
-$build=Join-Path $workspace 'temp\LiteLaunchBatchRenamer-build-1.0.3\rules-qa'
+$build=Join-Path $workspace 'temp\LiteLaunchBatchRenamer-build-1.0.4\rules-qa'
 New-Item -ItemType Directory -Path $build -Force|Out-Null
 & "$PSScriptRoot\build-ever-regex.ps1" -OutputDirectory $build|Out-Null
 $compiler=Join-Path $workspace 'tools\zig\zig-x86_64-windows-0.15.2\zig.exe'

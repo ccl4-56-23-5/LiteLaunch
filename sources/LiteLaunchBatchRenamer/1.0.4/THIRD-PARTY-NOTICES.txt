@@ -1,4 +1,4 @@
-LiteLaunch Batch Renamer 1.0.3 - Third-party notices
+﻿LiteLaunch Batch Renamer 1.0.4 - Third-party notices
 
 Made using RemObjects Pascal Script:
 https://github.com/remobjects/pascalscript

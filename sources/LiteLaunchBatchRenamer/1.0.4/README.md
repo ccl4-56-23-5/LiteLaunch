@@ -1,4 +1,4 @@
-# LiteLaunch 批量重命名插件 1.0.3
+﻿# LiteLaunch 批量重命名插件 1.0.4
 
 这版精简了重命名操作：新增和编辑规则只用一个窗口，处理方式及参数选项使用中文；切换处理方式直接更换同页参数。常用参数直接显示，其余在同页“更多设置”展开。
 
@@ -12,6 +12,6 @@
 
 运行 build.ps1 构建单EXE。使用Zig 0.15.2、系统.NET Framework编译器及Free Pascal 3.2.2，编译器位置和第三方来源见vendor的说明与provenance记录。Pascal Script基于RemObjects Pascal Script：https://github.com/remobjects/pascalscript 。ExifTool/Perl和Pascal组件内嵌在插件中，使用时无需另装。
 
-构建缓存位于工作区 temp/LiteLaunchBatchRenamer-build-1.0.3，交付位于 outputs/LiteLaunchBatchRenamer/1.0.3。验证入口为 qa/run-batch-form.ps1、qa/run-batch.ps1 和 qa/advanced_worker_test.py。
+构建缓存位于工作区 temp/LiteLaunchBatchRenamer-build-1.0.4，交付位于 outputs/LiteLaunchBatchRenamer/1.0.4。验证入口为 qa/run-batch-form.ps1、qa/run-batch.ps1 和 qa/advanced_worker_test.py。
 
-插件独立发布 batch-renamer-v1.0.3，基座保持1.0.30。按用户长期授权直接安装、发布GitHub，实际下载核验后清理旧版，保留用户数据与Git历史。自动验证与人工使用分别记录。
+插件独立发布 batch-renamer-v1.0.4，基座保持1.0.30。按用户长期授权直接安装、发布GitHub，实际下载核验后清理旧版，保留用户数据与Git历史。自动验证与人工使用分别记录。

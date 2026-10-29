@@ -198,6 +198,7 @@ void forms() {
     batch::Step switched;switched.kind=batch::Kind::Advanced;
     runForm([&](EForm&f){f.set(fieldId(f,L"添加内容"),L"旅行_");choose(f,100,L"编号");choose(f,100,L"添加文字");check(f.get(fieldId(f,L"添加内容"))==L"旅行_","switching-types-keeps-their-drafts");},[&]{return editor.batchForm(switched);});
     check(switched.options[L"text"]==L"旅行_"&&EverWindow::batchRuleSummary(switched)==L"添加文字：旅行_","rule-list-previews-the-literal-inserted-characters");
+    switched.options[L"text"]=L"[资料]_";check(EverWindow::batchRuleSummary(switched)==L"添加文字：[资料]_","literal-brackets-are-not-mistaken-for-variable-fields");
     batch::Step meta;meta.kind=batch::Kind::Advanced;meta.options={{L"type",L"Metadata"}};
     runForm([&](EForm&f){int id=fieldId(f,L"使用哪项信息");check((GetWindowLongPtrW(f.ctl(id),GWL_STYLE)&3)==CBS_DROPDOWNLIST,"metadata-is-a-selection-not-a-manual-tag-input");choose(f,id,L"图片：拍摄日期");f.set(fieldId(f,L"前面加字"),L"照片_");f.set(fieldId(f,L"后面加字"),L"_归档");check((GetWindowLongPtrW(f.ctl(580),GWL_STYLE)&ES_READONLY)!=0,"metadata-example-is-visible-and-readonly");},[&]{return editor.batchForm(meta);});
     check(meta.options[L"pattern"]==L"照片_:EXIF_DateTaken:_归档"&&EverWindow::batchRuleSummary(meta)==L"文件信息：照片_【拍摄日期】_归档","rule-list-displays-metadata-type-instead-of-raw-tag-code");
