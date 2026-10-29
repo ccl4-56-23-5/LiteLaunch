@@ -17,7 +17,7 @@
 # The only committed INI is a synthetic QA migration fixture.
 *.ini
 *.bak
-!sources/LiteLaunch/1.0.28/presets/LiteLaunch.ini
+!sources/LiteLaunch/1.0.29/presets/LiteLaunch.ini
 
 **/reference/
 *.qka
