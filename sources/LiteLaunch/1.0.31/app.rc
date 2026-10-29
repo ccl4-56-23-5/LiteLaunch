@@ -1,0 +1,39 @@
+﻿1 24 "app.manifest"
+1 ICON "app.ico"
+101 RCDATA "icons\\logo.svg"
+102 RCDATA "icons\\pin.svg"
+103 RCDATA "icons\\gear.svg"
+104 RCDATA "icons\\close.svg"
+105 RCDATA "icons\\plus.svg"
+106 RCDATA "icons\\codex-official-legacy.png"
+107 RCDATA "icons\\plugin-renamer.svg"
+108 RCDATA "icons\\plugin-cursor.svg"
+109 RCDATA "icons\\plugin-add.svg"
+110 RCDATA "plugins\\renamer.ico"
+111 RCDATA "plugins\\cursor.ico"
+
+1 VERSIONINFO
+FILEVERSION 1,0,31,0
+PRODUCTVERSION 1,0,31,0
+FILEFLAGSMASK 0x3fL
+FILEFLAGS 0x0L
+FILEOS 0x40004L
+FILETYPE 0x1L
+FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080404b0"
+        BEGIN
+            VALUE "FileDescription", "LiteLaunch EVER rename edition\0"
+            VALUE "FileVersion", "1.0.31\0"
+            VALUE "ProductName", "LiteLaunch\0"
+            VALUE "ProductVersion", "1.0.31\0"
+            VALUE "OriginalFilename", "LiteLaunch.exe\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0804, 1200
+    END
+END
