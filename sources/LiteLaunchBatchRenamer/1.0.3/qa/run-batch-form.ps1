@@ -4,7 +4,7 @@ $ErrorActionPreference = 'Stop'
 $versionSource = Split-Path -Parent $PSScriptRoot
 $workspaceDirectory = [IO.Path]::GetFullPath((Join-Path $versionSource '..\..\..'))
 if (-not $Compiler) { $Compiler = Join-Path $workspaceDirectory 'tools\zig\zig-x86_64-windows-0.15.2\zig.exe' }
-$fixtureBuild = Join-Path $workspaceDirectory 'temp\LiteLaunchBatchRenamer-build-1.0.2\batch-form-qa'
+$fixtureBuild = Join-Path $workspaceDirectory 'temp\LiteLaunchBatchRenamer-build-1.0.3\batch-form-qa'
 New-Item -ItemType Directory -Path $fixtureBuild -Force | Out-Null
 $scintilla = & (Join-Path $PSScriptRoot 'build-scintilla.ps1') -Compiler $Compiler
 $fixtureExe = Join-Path $fixtureBuild 'batch_form_test.exe'

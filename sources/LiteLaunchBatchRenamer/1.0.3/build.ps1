@@ -3,8 +3,8 @@ $ErrorActionPreference='Stop'
 . "$PSScriptRoot\qa\set-build-cache.ps1"
 $workspace=[IO.Path]::GetFullPath("$PSScriptRoot\..\..\..")
 if(-not $Compiler){$Compiler=Join-Path $workspace 'tools\zig\zig-x86_64-windows-0.15.2\zig.exe'}
-$build=Join-Path $workspace 'temp\LiteLaunchBatchRenamer-build-1.0.2'
-$out=Join-Path $workspace 'outputs\LiteLaunchBatchRenamer\1.0.2'
+$build=Join-Path $workspace 'temp\LiteLaunchBatchRenamer-build-1.0.3'
+$out=Join-Path $workspace 'outputs\LiteLaunchBatchRenamer\1.0.3'
 New-Item -ItemType Directory -Path $build,$out -Force|Out-Null
 $scintilla=& "$PSScriptRoot\qa\build-scintilla.ps1" -Compiler $Compiler
 & "$PSScriptRoot\qa\build-ever-regex.ps1" -OutputDirectory $build|Out-Null
@@ -23,8 +23,8 @@ $rc=@"
 301 RCDATA "$worker"
 400 RCDATA "$license"
 1 VERSIONINFO
-FILEVERSION 1,0,2,0
-PRODUCTVERSION 1,0,2,0
+FILEVERSION 1,0,3,0
+PRODUCTVERSION 1,0,3,0
 FILEFLAGSMASK 0x3fL
 FILEFLAGS 0
 FILEOS 0x40004L
@@ -36,9 +36,9 @@ BEGIN
   BLOCK "080404b0"
   BEGIN
    VALUE "FileDescription", "LiteLaunch Batch Renamer Plugin\0"
-   VALUE "FileVersion", "1.0.2.0\0"
+   VALUE "FileVersion", "1.0.3.0\0"
    VALUE "ProductName", "LiteLaunch Batch Renamer\0"
-   VALUE "ProductVersion", "1.0.2.0\0"
+   VALUE "ProductVersion", "1.0.3.0\0"
   END
  END
  BLOCK "VarFileInfo"
@@ -54,8 +54,8 @@ foreach($module in @('rename','ever_rules','ever_regex')){
  & $Compiler c++ -DLITELAUNCH_BATCH_PLUGIN -target x86_64-windows-gnu -std=c++17 -Os -c "$PSScriptRoot\$module.cpp" -o "$build\$module.o"
  if($LASTEXITCODE -ne 0){throw "Module build failed: $module"}
 }
-$exe=Join-Path $out 'LiteLaunch-Plugin-BatchRenamer-1.0.2-x64.exe'
+$exe=Join-Path $out 'LiteLaunch-Plugin-BatchRenamer-1.0.3-x64.exe'
 & $Compiler c++ -target x86_64-windows-gnu -std=c++17 -Os -s -fno-exceptions -fno-rtti -municode '-Wl,--subsystem,windows' "$PSScriptRoot\plugins\ever-entry.cpp" "$PSScriptRoot\glass.cpp" "$build\rename.o" "$build\ever_rules.o" "$build\ever_regex.o" $scintilla.Archive "$build\plugin.res" -o $exe -luser32 -lgdi32 -lgdiplus -lshlwapi -lshell32 -lole32 -lcomdlg32 -luuid -ladvapi32 -loleaut32 -lcomctl32 -limm32 -lpropsys -lversion
 if($LASTEXITCODE -ne 0){throw 'Plugin link failed'}
-[ordered]@{id='batch-renamer';name='批量重命名';version='1.0.2';minHostVersion='1.0.24';asset=[IO.Path]::GetFileName($exe);productName='LiteLaunch Batch Renamer';sha256=(Get-FileHash -LiteralPath $exe).Hash;status='local-candidate'}|ConvertTo-Json|Set-Content -LiteralPath "$out\plugin-candidate.json" -Encoding utf8
+[ordered]@{id='batch-renamer';name='批量重命名';version='1.0.3';minHostVersion='1.0.34';asset=[IO.Path]::GetFileName($exe);productName='LiteLaunch Batch Renamer';sha256=(Get-FileHash -LiteralPath $exe).Hash;status='local-candidate'}|ConvertTo-Json|Set-Content -LiteralPath "$out\plugin-candidate.json" -Encoding utf8
 Get-Item -LiteralPath $exe|Select-Object FullName,Length

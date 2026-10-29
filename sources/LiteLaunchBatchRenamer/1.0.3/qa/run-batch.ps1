@@ -2,7 +2,7 @@
 . "$PSScriptRoot\set-build-cache.ps1"
 $source=Split-Path $PSScriptRoot -Parent;$workspace=[IO.Path]::GetFullPath("$source\..\..\..")
 $compiler=Join-Path $workspace 'tools\zig\zig-x86_64-windows-0.15.2\zig.exe'
-$build=Join-Path $workspace 'temp\LiteLaunchBatchRenamer-build-1.0.2\batch-qa';New-Item -ItemType Directory -Path $build -Force|Out-Null
+$build=Join-Path $workspace 'temp\LiteLaunchBatchRenamer-build-1.0.3\batch-qa';New-Item -ItemType Directory -Path $build -Force|Out-Null
 $scintilla=& "$PSScriptRoot\build-scintilla.ps1" -Compiler $compiler
 & "$PSScriptRoot\build-ever-regex.ps1" -OutputDirectory $build|Out-Null
 $exe=Join-Path $build 'batch_test.exe'

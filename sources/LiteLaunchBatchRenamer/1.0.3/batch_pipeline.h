@@ -50,7 +50,7 @@ inline bool preview(const std::vector<Step>&steps,const std::vector<Item>&items,
  output.swap(names);return true;
 }
 inline std::wstring summary(const Step&s){
- if(s.kind==Kind::Advanced){auto get=[&](const wchar_t*k){auto i=s.options.find(k);return i==s.options.end()?std::wstring():i->second;};return get(L"label")+L" · "+get(L"type")+(get(L"type")==L"Serialize"?L"（起始"+get(L"start")+L" / 步长"+get(L"step")+L"）":L"");}
+ if(s.kind==Kind::Advanced){auto get=[&](const wchar_t*k){auto i=s.options.find(k);return i==s.options.end()?std::wstring():i->second;};return ruleLabel(get(L"type"))+(get(L"type")==L"Serialize"?L"（从"+get(L"start")+L"开始，每次"+get(L"step")+L"）":L"");}
  if(s.kind==Kind::Clear)return s.skipExtension?L"清空名称（保留扩展名）":L"清空整个名称";
  if(s.kind==Kind::Extension)return L"扩展名 → "+s.text;if(s.kind==Kind::Strip)return L"移除字符："+s.text;
  const auto&r=s.rule;
