@@ -29,7 +29,7 @@ static bool executable(std::wstring&path,std::wstring&err){
     DWORD size=SizeofResource(GetModuleHandleW(nullptr),resource);HGLOBAL loaded=LoadResource(GetModuleHandleW(nullptr),resource);const BYTE*bytes=(const BYTE*)LockResource(loaded);
     if(!bytes||!size)return fail(err,L"内嵌正则组件无效。");
     wchar_t base[MAX_PATH]={};if(FAILED(SHGetFolderPathW(nullptr,CSIDL_LOCAL_APPDATA,nullptr,SHGFP_TYPE_CURRENT,base)))return fail(err,L"无法取得正则组件缓存目录。");
-    std::wstring directory=std::wstring(base)+L"\\LiteLaunch";CreateDirectoryW(directory.c_str(),nullptr);directory+=L"\\runtime";CreateDirectoryW(directory.c_str(),nullptr);directory+=L"\\1.0.4";CreateDirectoryW(directory.c_str(),nullptr);
+    std::wstring directory=std::wstring(base)+L"\\LiteLaunch";CreateDirectoryW(directory.c_str(),nullptr);directory+=L"\\runtime";CreateDirectoryW(directory.c_str(),nullptr);directory+=L"\\1.0.5";CreateDirectoryW(directory.c_str(),nullptr);
     path=directory+L"\\EverRegex.exe";bool equal=false;
     HANDLE previous=CreateFileW(path.c_str(),GENERIC_READ,FILE_SHARE_READ,nullptr,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,nullptr);
     if(previous!=INVALID_HANDLE_VALUE){LARGE_INTEGER oldSize;DWORD got=0;if(GetFileSizeEx(previous,&oldSize)&&oldSize.QuadPart==size){std::vector<BYTE>old(size);equal=ReadFile(previous,old.data(),size,&got,nullptr)&&got==size&&!memcmp(old.data(),bytes,size);}CloseHandle(previous);}

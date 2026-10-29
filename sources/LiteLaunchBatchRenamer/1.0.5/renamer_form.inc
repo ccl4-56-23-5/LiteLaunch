@@ -27,7 +27,7 @@ bool batchAdvancedForm(batch::Step&step){
  auto check=[&](const wchar_t*k,const wchar_t*l,bool v=false){return add(k,l,v?L"1":L"0",1);};
  auto combo=[&](const wchar_t*k,const wchar_t*l,const wchar_t*v,std::vector<std::wstring>c){return add(k,l,v,4,c);};
  auto multi=[&](const wchar_t*k,const wchar_t*l,const wchar_t*v=L""){return add(k,l,v,2);};
- auto place=[&](){combo(L"where",L"放在哪里",L"prefix",{L"prefix · 开头",L"suffix · 末尾",L"position · 指定位置",L"before · 定位文字前",L"after · 定位文字后",L"replace · 替换整个名称"});edit(L"position",L"插入位置（从1开始）",L"1");edit(L"anchor",L"定位文字");check(L"rtl",L"位置从右侧计数");};
+ auto place=[&](){combo(L"where",L"放在哪里",L"suffix",{L"prefix · 开头",L"suffix · 末尾",L"position · 指定位置",L"before · 定位文字前",L"after · 定位文字后",L"replace · 替换整个名称"});edit(L"position",L"插入位置（从1开始）",L"1");edit(L"anchor",L"定位文字");check(L"rtl",L"位置从右侧计数");};
  if(type==L"Insert"){edit(L"text",L"添加内容",L"",true);place();check(L"case",L"定位文字区分大小写");}
  else if(type==L"Delete"){check(L"clear",L"清空名称");combo(L"from",L"起始方式",L"position",{L"position · 指定位置",L"delimiter · 指定分隔符"});edit(L"position",L"起始位置（从1开始）",L"1");edit(L"fromText",L"起始分隔符");combo(L"until",L"结束方式",L"count",{L"count · 删除指定数量",L"delimiter · 指定分隔符",L"end · 直到末尾"});edit(L"count",L"删除字符数",L"1");edit(L"untilText",L"结束分隔符");check(L"keepDelimiters",L"保留起止分隔符");check(L"rtl",L"从右向左删除");}
  else if(type==L"Remove"||type==L"Replace"||type==L"RegEx"){

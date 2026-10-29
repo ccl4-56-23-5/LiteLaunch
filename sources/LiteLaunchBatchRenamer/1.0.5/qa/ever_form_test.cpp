@@ -198,6 +198,12 @@ void forms() {
     batch::Step switched;switched.kind=batch::Kind::Advanced;
     runForm([&](EForm&f){f.set(fieldId(f,L"添加内容"),L"旅行_");choose(f,100,L"编号");choose(f,100,L"添加文字");check(f.get(fieldId(f,L"添加内容"))==L"旅行_","switching-types-keeps-their-drafts");},[&]{return editor.batchForm(switched);});
     check(switched.options[L"text"]==L"旅行_"&&EverWindow::batchRuleSummary(switched)==L"添加文字：旅行_","rule-list-previews-the-literal-inserted-characters");
+    check(switched.options[L"where"]==L"suffix","new-insert-rule-saves-suffix-without-changing-position");
+    std::vector<std::wstring> insertedNames;std::wstring insertionError;
+    check(batch::preview({switched},{{L"C:\\fixture\\sample.jpg",L"sample.jpg",false}},insertedNames,insertionError)&&insertedNames.size()==1&&insertedNames[0]==L"sample旅行_.jpg","new-default-appends-before-existing-extension");
+    batch::Step oldPrefix=switched;oldPrefix.options[L"where"]=L"prefix";
+    runForm([&](EForm&f){check(f.get(fieldId(f,L"放在哪里"))==L"开头","editing-explicit-prefix-keeps-existing-position");},[&]{return editor.batchForm(oldPrefix);});
+    check(oldPrefix.options[L"where"]==L"prefix","saving-existing-prefix-does-not-migrate-it-to-suffix");
     switched.options[L"text"]=L"[资料]_";check(EverWindow::batchRuleSummary(switched)==L"添加文字：[资料]_","literal-brackets-are-not-mistaken-for-variable-fields");
     batch::Step meta;meta.kind=batch::Kind::Advanced;meta.options={{L"type",L"Metadata"}};
     runForm([&](EForm&f){int id=fieldId(f,L"使用哪项信息");check((GetWindowLongPtrW(f.ctl(id),GWL_STYLE)&3)==CBS_DROPDOWNLIST,"metadata-is-a-selection-not-a-manual-tag-input");choose(f,id,L"图片：拍摄日期");f.set(fieldId(f,L"前面加字"),L"照片_");f.set(fieldId(f,L"后面加字"),L"_归档");check((GetWindowLongPtrW(f.ctl(580),GWL_STYLE)&ES_READONLY)!=0,"metadata-example-is-visible-and-readonly");},[&]{return editor.batchForm(meta);});
@@ -219,6 +225,8 @@ void forms() {
     editor.batchSimple=true;editor.hidden=false;editor.rebuild();
     runForm([&](EForm&form){check(form.get(100)==L"编号"&&form.get(fieldId(form,L"从几开始"))==L"1"&&form.get(fieldId(form,L"编号位数"))==L"3","simple-numbering-uses-the-same-Chinese-single-window-form");},[&]{editor.batchQuick(EverWindow::BR_QNUMBER);return true;});
     check(editor.text()==L"字段😀-a-001.jpg\n字段😀-b-002.jpg\n字段😀-c-003.jpg","simple-number-button-runs-production-form-and-updates-current-preview");
+    runForm([&](EForm&f){check(f.get(102)==L"末尾","simple-add-defaults-to-suffix");f.set(101,L"_尾");},[&]{editor.batchQuick(EverWindow::BR_QADD);return true;});
+    check(editor.text()==L"字段😀-a-001_尾.jpg\n字段😀-b-002_尾.jpg\n字段😀-c-003_尾.jpg","simple-add-appends-text-and-preserves-extensions");
     for(int scale:{96,120,144,192}){
         EForm measured;measured.fields={{101,L"位置（1表示开头，-1表示末尾）",L"1"},{102,L"保留扩展名，不参与本条规则",L"1",1},{103,L"字符一行一对\n查找内容|替换内容",L"",2}};
         runForm([&](EForm&form){
