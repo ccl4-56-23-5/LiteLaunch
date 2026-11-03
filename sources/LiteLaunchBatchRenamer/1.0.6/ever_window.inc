@@ -224,9 +224,16 @@ static bool ePickPath(HWND owner,bool save,std::wstring &path,const wchar_t *fil
 enum { EE_EDITOR=400,EE_STATUS,EE_OK,EE_FIND,EE_RULE,EE_OTHER,EE_EXT,EE_LINK,EE_ADD,EE_FOLDER,EE_READ,EE_ZOOMIN,EE_ZOOMOUT,EE_COPY,EE_SPEAK,EE_SEARCH,EE_UNDO,EE_REDO,
     EE_RESTORE,EE_PIN,EE_HIGHLIGHT,EE_CUT,EE_PASTE,EE_SELECTALL,
     EE_NUMBER=500,EE_CHANGEEXT,EE_BEGINNING,EE_PART,EE_DIRECTORY,EE_COUNT,EE_HIDE,EE_SHOW,EE_REGRET,EE_TEMPLATES,EE_SETTINGS,EE_LINKSET,EE_SORT,EE_BACKUP,EE_IMPORT,EE_NAMING=650,EE_TEMPLATEBASE=700,EE_LINKBASE=12000 };
-static const wchar_t *eSortValues[]={L"Default",L"Origin",L"FileName",L"FileNameNature",L"FileSizeAsc",L"FileSizeDesc",L"CreationTimeDesc",L"CreationTimeAsc",L"LastAccessTimeDesc",L"LastAccessTimeAsc",L"LastWriteTimeDesc",L"LastWriteTimeAsc"};
-static std::vector<std::wstring> eSortLabels(){return {L"默认（文件名自然排序）",L"原始（系统返回顺序）",L"文件名（字母顺序）",L"文件名（自然顺序）",L"文件大小（从小到大）",L"文件大小（从大到小）",L"创建时间（从新到旧）",L"创建时间（从旧到新）",L"最后访问时间（从晚到早）",L"最后访问时间（从早到晚）",L"最后写入时间（从晚到早）",L"最后写入时间（从早到晚）"};}
-static std::wstring eSortLabel(){auto labels=eSortLabels();std::wstring mode=eSetting(L"Sort",L"Origin");for(int i=0;i<12;++i)if(mode==eSortValues[i])return labels[i];return labels[1];}
+static const wchar_t* eDefaultSort(){
+#ifdef LITELAUNCH_BATCH_PLUGIN
+    return L"FileNameNature";
+#else
+    return L"Origin";
+#endif
+}
+static const wchar_t *eSortValues[]={L"Default",L"Origin",L"FileName",L"FileNameNature",L"FileSizeAsc",L"FileSizeDesc",L"CreationTimeDesc",L"CreationTimeAsc",L"LastAccessTimeDesc",L"LastAccessTimeAsc",L"LastWriteTimeDesc",L"LastWriteTimeAsc",L"FileNameNatureDesc",L"FileNameDesc",L"PhotoTimeAsc",L"PhotoTimeDesc",L"FileExtensionAsc",L"FileExtensionDesc",L"OriginDesc"};
+static std::vector<std::wstring> eSortLabels(){return {L"默认（文件名自然排序）",L"原始（系统返回顺序）",L"文件名（字母顺序）",L"文件名（自然顺序）",L"文件大小（从小到大）",L"文件大小（从大到小）",L"创建时间（从新到旧）",L"创建时间（从旧到新）",L"最后访问时间（从晚到早）",L"最后访问时间（从早到晚）",L"最后写入时间（从晚到早）",L"最后写入时间（从早到晚）",L"文件名自然排序（倒序）",L"文件名字母排序（倒序）",L"拍摄时间（从早到晚）",L"拍摄时间（从晚到早）",L"扩展名（正序）",L"扩展名（倒序）",L"原始顺序（倒序）"};}
+static std::wstring eSortLabel(){auto labels=eSortLabels();std::wstring mode=eSetting(L"Sort",eDefaultSort());for(size_t i=0;i<labels.size();++i)if(mode==eSortValues[i])return labels[i];return labels[1];}
 static bool eSourceSelection(HWND source,std::vector<Entry>&items) {
     if(readSelection(source,items))return true;if(!source||!IsWindow(source))return false;HWND root=GetAncestor(source,GA_ROOT);wchar_t cls[100]={};GetClassNameW(root,cls,100);
     if(_wcsicmp(cls,L"EVERYTHING")&&_wcsicmp(cls,L"TTOTAL_CMD"))return false;
@@ -256,7 +263,7 @@ lines.erase(std::remove(lines.begin(),lines.end(),L""),lines.end());
 return lines;}
 static bool eInteger(const std::wstring&s,int &n){if(s.empty())return false;wchar_t*end=nullptr;errno=0;long long value=wcstoll(s.c_str(),&end,10);if(errno||!end||*end||value<INT_MIN||value>INT_MAX)return false;n=(int)value;return true;}
 static std::wstring eClipboardText(HWND window){std::wstring result;if(OpenClipboard(window)){HANDLE h=GetClipboardData(CF_UNICODETEXT);if(h){const wchar_t*p=(const wchar_t*)GlobalLock(h);if(p){result=p;GlobalUnlock(h);}}CloseClipboard();}return result;}
-struct EExtensionUndo {bool before=false,after=false;std::vector<std::wstring>oldExtensions,newExtensions;};
+struct EExtensionUndo {bool before=false,after=false,reordered=false;std::vector<std::wstring>oldExtensions,newExtensions;std::vector<Entry>oldItems,newItems;std::wstring oldPreview,newPreview;};
 static std::wstring ePresetHome(){
 #ifdef LITELAUNCH_EVER_TESTING
     if(!eTestPresetHome.empty())return eTestPresetHome;
@@ -296,14 +303,18 @@ struct EverWindow {
     std::wstring selectedText()const{int n=(int)sci(SCI_GETSELTEXT);std::string s(n>0?n:1,0);sci(SCI_GETSELTEXT,0,(LPARAM)&s[0]);if(!s.empty()&&s.back()==0)s.pop_back();return eWide(s);}
     void setText(const std::wstring &s,bool undoable=true){std::string t=eUtf8(s);if(undoable){sci(SCI_BEGINUNDOACTION);sci(SCI_SETTARGETSTART,0);sci(SCI_SETTARGETEND,sci(SCI_GETTEXTLENGTH));sci(SCI_REPLACETARGET,t.size(),(LPARAM)t.data());sci(SCI_ENDUNDOACTION);}else{sci(SCI_SETTEXT,0,(LPARAM)t.c_str());sci(SCI_EMPTYUNDOBUFFER);extensionUndo.clear();}update();}
     void textAndExtensionMode(const std::vector<std::wstring>&names,bool mode,const std::vector<std::wstring>&exts){EExtensionUndo action;action.before=hidden;action.after=mode;action.oldExtensions=extensions;action.newExtensions=exts;extensionUndo.push_back(action);sci(SCI_BEGINUNDOACTION);sci(SCI_ADDUNDOACTION,extensionUndo.size(),0);hidden=mode;extensions=exts;setText(eJoin(names));sci(SCI_ENDUNDOACTION);update();}
-    void extensionNotification(SCNotification*notification){if(!(notification->modificationType&SC_MOD_CONTAINER)||notification->token<=0||(size_t)notification->token>extensionUndo.size())return;const auto&action=extensionUndo[notification->token-1];bool undo=(notification->modificationType&SC_PERFORMED_UNDO)!=0;hidden=undo?action.before:action.after;extensions=undo?action.oldExtensions:action.newExtensions;update();}
+    void extensionNotification(SCNotification*notification){if(!(notification->modificationType&SC_MOD_CONTAINER)||notification->token<=0||(size_t)notification->token>extensionUndo.size())return;const auto&action=extensionUndo[notification->token-1];bool undo=(notification->modificationType&SC_PERFORMED_UNDO)!=0;hidden=undo?action.before:action.after;extensions=undo?action.oldExtensions:action.newExtensions;
+#ifdef LITELAUNCH_BATCH_PLUGIN
+        if(action.reordered){items=undo?action.oldItems:action.newItems;lastRulePreview=undo?action.oldPreview:action.newPreview;}
+#endif
+        update();}
     void restoreNames(){std::vector<std::wstring>ns,exts;for(const auto&e:items){std::wstring ext=extension(e);exts.push_back(ext);ns.push_back(hidden?e.name.substr(0,e.name.size()-ext.size()):e.name);}textAndExtensionMode(ns,hidden,exts);}
     bool protectDraft(){if(items.empty())return true;std::vector<std::wstring>current;for(size_t i=0;i<items.size();++i){std::wstring name=items[i].name;if(hidden)name.resize(name.size()-extensions[i].size());current.push_back(name);}if(eJoin(current)==text())return true;return MessageBoxW(window,L"当前名称尚未提交。继续读取或添加项目会重新载入名称，是否继续？",eProductName(),MB_YESNO|MB_ICONQUESTION|MB_DEFBUTTON2)==IDYES;}
     bool names(std::vector<std::wstring>&out){out=eNameLines(text());if(items.empty()&&out.size()==1&&out[0].empty()){out.clear();return true;}if(out.size()!=items.size()){warn(L"名称行数与项目数不一致。每行对应一个项目，请保留原行数和顺序。");return false;}return true;}
     static std::wstring extension(const Entry&e){size_t dot=e.name.find_last_of(L'.');return !e.folder&&dot!=e.name.npos&&dot>0?e.name.substr(dot):L"";}
     void rebuild(){std::vector<std::wstring>ns;extensions.clear();for(const auto&e:items){std::wstring ext=extension(e);extensions.push_back(ext);ns.push_back(hidden?e.name.substr(0,e.name.size()-ext.size()):e.name);}setText(eJoin(ns),false);if(items.empty())SetWindowTextW(window,eProductName());else SetWindowTextW(window,(std::wstring(eProductName())+L"    "+parent(items.front().path)).c_str());
 #ifdef LITELAUNCH_BATCH_PLUGIN
-        batchPreview(false);
+        if(items.empty()){batchOrigin.clear();batchNextOrigin=0;}batchPreview(false);
 #endif
     }
     void update(){if(!editor)return;auto ns=eNameLines(text());bool valid=ns.size()==items.size()&&!items.empty();EnableWindow(ctl(EE_OK),valid);status(std::to_wstring(items.size())+L"个项目 · "+std::to_wstring(ns.size())+L"行 · "+(hidden?L"扩展名已隐藏":L"扩展名已显示"));
@@ -314,6 +325,10 @@ struct EverWindow {
     void toggle(bool hide){if(hide==hidden)return;std::vector<std::wstring>ns,exts=extensions;if(!names(ns))return;if(hide){exts.clear();for(size_t i=0;i<ns.size();++i){Entry e=items[i];e.name=ns[i];std::wstring ext=extension(e);exts.push_back(ext);ns[i].resize(ns[i].size()-ext.size());}}else{for(size_t i=0;i<ns.size();++i)ns[i]+=extensions[i];}textAndExtensionMode(ns,hide,exts);}
     void choose(bool folders,bool children=false){if(!protectDraft())return;Com<IFileOpenDialog>p;if(FAILED(CoCreateInstance(CLSID_FileOpenDialog,nullptr,CLSCTX_ALL,IID_PPV_ARGS(p.out())))){warn(L"无法打开文件选择器。");return;}DWORD opts=0;p->GetOptions(&opts);p->SetOptions(opts|FOS_ALLOWMULTISELECT|FOS_FORCEFILESYSTEM|FOS_PATHMUSTEXIST|FOS_NOCHANGEDIR|(folders?FOS_PICKFOLDERS:FOS_FILEMUSTEXIST));p->SetTitle(children?L"选择父目录：添加其直接子文件夹":folders?L"按住 Ctrl 或 Shift 多选要重命名的文件夹":L"选择要重命名的文件");if(SUCCEEDED(p->Show(window))){Com<IShellItemArray>result;if(SUCCEEDED(p->GetResults(result.out()))){DWORD n=0;result->GetCount(&n);for(DWORD i=0;i<n;++i){Com<IShellItem>item;LPWSTR path=nullptr;if(SUCCEEDED(result->GetItemAt(i,item.out()))&&SUCCEEDED(item->GetDisplayName(SIGDN_FILESYSPATH,&path))){if(children){std::wstring error;if(!eAddChildFolders(items,path,error))warn(error);}else addPath(items,path);CoTaskMemFree(path);}}}sortInitial();rebuild();}}
     void sortInitial(){
+#ifdef LITELAUNCH_BATCH_PLUGIN
+        batchRememberOriginal();std::vector<size_t>order;std::wstring error;int missing=0;
+        if(batchSortOrder(eSetting(L"Sort",eDefaultSort()),order,error,missing)){std::vector<Entry>sorted;for(auto i:order)sorted.push_back(items[i]);items.swap(sorted);}else warn(error);return;
+#endif
         std::wstring mode=eSetting(L"Sort",L"Origin");if(mode==L"Origin")return;
         std::stable_sort(items.begin(),items.end(),[mode](const Entry&a,const Entry&b){
             WIN32_FILE_ATTRIBUTE_DATA aa={},bb={};bool metadata=mode!=L"Default"&&mode!=L"FileNameNature"&&mode!=L"FileName";
@@ -349,7 +364,11 @@ struct EverWindow {
         f.extraLabel=L"选择颜色 / 字体";f.extra=[](EForm&p){HMENU menu=CreatePopupMenu();AppendMenuW(menu,MF_STRING,1,L"背景颜色…");AppendMenuW(menu,MF_STRING,2,L"文字颜色…");AppendMenuW(menu,MF_STRING,3,L"字体…");POINT point;GetCursorPos(&point);UINT id=TrackPopupMenu(menu,TPM_RETURNCMD,point.x,point.y,0,p.window,nullptr);DestroyMenu(menu);if(id==1||id==2){std::wstring value=p.get(100+id);if(!value.empty()&&value[0]==L'#')value.erase(0,1);DWORD rgb=wcstoul(value.c_str(),nullptr,16);static COLORREF custom[16]={};CHOOSECOLORW cc={sizeof(cc)};cc.hwndOwner=p.window;cc.rgbResult=RGB((rgb>>16)&255,(rgb>>8)&255,rgb&255);cc.lpCustColors=custom;cc.Flags=CC_FULLOPEN|CC_RGBINIT;if(ChooseColorW(&cc)){wchar_t text[10];swprintf(text,10,L"%02X%02X%02X",GetRValue(cc.rgbResult),GetGValue(cc.rgbResult),GetBValue(cc.rgbResult));p.set(100+id,text);}}else if(id==3){LOGFONTW font={};font.lfHeight=-p.px(std::max(6,p.num(103)));std::wstring name=p.get(104);wcsncpy(font.lfFaceName,name.c_str(),LF_FACESIZE-1);CHOOSEFONTW choose={sizeof(choose)};choose.hwndOwner=p.window;choose.lpLogFont=&font;choose.Flags=CF_SCREENFONTS|CF_INITTOLOGFONTSTRUCT;if(ChooseFontW(&choose)){p.set(104,font.lfFaceName);p.set(103,std::to_wstring(std::max(6,choose.iPointSize/10)));}}};
         if(!f.run(window,dpi,L"EVER重命名 · 设置"))return;int size=0,wait=0;if(!eInteger(f.value(103),size)||!eInteger(f.value(106),wait)||size<6||size>72||wait<200||wait>9000){warn(L"字号应为6—72，剪贴板等待应为200—9000毫秒。");return;}if(f.value(104).empty())for(auto&field:f.fields)if(field.id==104)field.value=L"Microsoft YaHei UI";
         for(auto&field:f.fields)if(field.id==101||field.id==102){std::wstring s=field.value;if(s.empty())s=field.id==101?L"FFFFFF":L"202020";if(s[0]==L'#')s.erase(0,1);field.value=s;if(s.size()!=6||s.find_first_not_of(L"0123456789abcdefABCDEF")!=s.npos){warn(L"颜色请填写6位十六进制值，如FFFFFF。");return;}}
-        const wchar_t*keys[]={L"Background",L"Foreground",L"FontSize",L"Font"};for(int i=0;i<4;++i)eSaveSetting(keys[i],f.value(101+i));auto labels=eSortLabels();for(int i=0;i<12;++i)if(f.value(105)==labels[i])eSaveSetting(L"Sort",eSortValues[i]);eSaveSetting(L"ClipboardWait",f.value(106));eSaveSetting(L"HideExtension",f.value(108));eSaveSetting(L"Refresh",f.value(109));appearance();if(f.value(107)!=L"不操作")backup(f.value(107)==L"从文件恢复");
+        const wchar_t*keys[]={L"Background",L"Foreground",L"FontSize",L"Font"};for(int i=0;i<4;++i)eSaveSetting(keys[i],f.value(101+i));auto labels=eSortLabels();for(size_t i=0;i<labels.size();++i)if(f.value(105)==labels[i])eSaveSetting(L"Sort",eSortValues[i]);eSaveSetting(L"ClipboardWait",f.value(106));eSaveSetting(L"HideExtension",f.value(108));eSaveSetting(L"Refresh",f.value(109));appearance();
+#ifdef LITELAUNCH_BATCH_PLUGIN
+        batchApplySort(eSetting(L"Sort",eDefaultSort()),false);
+#endif
+        if(f.value(107)!=L"不操作")backup(f.value(107)==L"从文件恢复");
     }
     void appearance(){std::string name=eUtf8(eSetting(L"Font",L"Microsoft YaHei UI"));sci(SCI_STYLESETFONT,STYLE_DEFAULT,(LPARAM)name.c_str());sci(SCI_STYLESETSIZE,STYLE_DEFAULT,_wtoi(eSetting(L"FontSize",eDefaultFontSize()).c_str()));auto color=[](std::wstring s){DWORD n=wcstoul(s.c_str(),nullptr,16);return RGB((n>>16)&255,(n>>8)&255,n&255);};sci(SCI_STYLESETBACK,STYLE_DEFAULT,color(eSetting(L"Background",L"FFFFFF")));sci(SCI_STYLESETFORE,STYLE_DEFAULT,color(eSetting(L"Foreground",L"202020")));sci(SCI_STYLECLEARALL);sci(SCI_SETWRAPMODE,SC_WRAP_WORD);
 #ifdef LITELAUNCH_BATCH_PLUGIN
@@ -428,7 +447,7 @@ for(size_t i=0;i<ns.size();++i)if(hidden)ns[i]+=extensions[i];
     void command(int id){
 #ifdef LITELAUNCH_BATCH_PLUGIN
         if(id==EE_OTHER){batchMore();return;}
-        if(id>=BR_ADD&&id<=BR_QREDO){batchCommand(id);return;}
+        if(id>=BR_ADD&&id<=BR_SORTDIR){batchCommand(id);return;}
         if(id==EE_NAMING&&!batchLegacyAction){batchQuick(BR_QNUMBER);return;}
 #endif
 
@@ -508,7 +527,11 @@ item->CtlID==EE_OK
 #else
         ((MINMAXINFO*)b)->ptMinTrackSize={d->px(700),d->px(420)};
 #endif
-        return 0;}case WM_COMMAND:if(LOWORD(a)!=EE_EDITOR&&HIWORD(a)==0)d->command(LOWORD(a));return 0;case WM_TIMER:
+        return 0;}case WM_COMMAND:
+#ifdef LITELAUNCH_BATCH_PLUGIN
+        if(LOWORD(a)==BR_SORT&&HIWORD(a)==CBN_SELCHANGE){d->batchSortChanged(false);return 0;}
+#endif
+        if(LOWORD(a)!=EE_EDITOR&&HIWORD(a)==0)d->command(LOWORD(a));return 0;case WM_TIMER:
 #ifdef LITELAUNCH_BATCH_PLUGIN
         if(a==8201){KillTimer(w,8201);d->batchFiles();return 0;}
 #endif

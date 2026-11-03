@@ -2,7 +2,7 @@
 . "$PSScriptRoot\set-build-cache.ps1"
 $source=Split-Path $PSScriptRoot -Parent;$workspace=[IO.Path]::GetFullPath("$source\..\..\..")
 $compiler=Join-Path $workspace 'tools\zig\zig-x86_64-windows-0.15.2\zig.exe'
-$build=Join-Path $workspace 'temp\LiteLaunchBatchRenamer-build-1.0.5\batch-qa';New-Item -ItemType Directory -Path $build -Force|Out-Null
+$build=Join-Path $workspace 'temp\LiteLaunchBatchRenamer-build-1.0.6\batch-qa';New-Item -ItemType Directory -Path $build -Force|Out-Null
 $scintilla=& "$PSScriptRoot\build-scintilla.ps1" -Compiler $compiler
 & "$PSScriptRoot\build-ever-regex.ps1" -OutputDirectory $build|Out-Null
 $exe=Join-Path $build 'batch_test.exe'
@@ -16,3 +16,4 @@ $private=Join-Path $build ('LL_BATCH_QA_'+[guid]::NewGuid().ToString('N'))
 & $exe $private (Join-Path $build 'EverRegex.exe')
 if($LASTEXITCODE -ne 0){throw 'Batch pipeline regression failed'}
 Copy-Item -LiteralPath (Join-Path $private 'preview.png') -Destination "$PSScriptRoot\batch-renamer-preview.png" -Force
+Copy-Item -LiteralPath (Join-Path $private 'sort-preview.png') -Destination "$PSScriptRoot\sort-preview.png" -Force

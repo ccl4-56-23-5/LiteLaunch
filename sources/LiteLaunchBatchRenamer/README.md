@@ -1,4 +1,6 @@
-﻿# LiteLaunch 批量重命名插件 1.0.5
+﻿# LiteLaunch 批量重命名插件 1.0.6
+
+文件预览区新增排序依据下拉框及正序／倒序按钮，支持文件名自然排序、字母排序、拍摄时间、修改时间、创建时间、访问时间、大小、扩展名与原始顺序。默认按文件名自然正序，1、2、12按数值排列。排序顺序直接用于规则编号；手工名称随源文件一起移动，排序支持撤销与重做。缺少拍摄时间的文件始终放在末尾，同时间按文件名自然排序。排序选择会记住并用于下一次添加文件。
 
 新增规则的插入位置默认是末尾，简易处理的“添加文字”也默认放在末尾；默认保留扩展名，例如 sample.jpg 添加 _尾 后预览为 sample_尾.jpg。已有规则和预设明确设置的位置继续保留。
 
@@ -14,6 +16,6 @@
 
 运行 build.ps1 构建单EXE。使用Zig 0.15.2、系统.NET Framework编译器及Free Pascal 3.2.2，编译器位置和第三方来源见vendor的说明与provenance记录。Pascal Script基于RemObjects Pascal Script：https://github.com/remobjects/pascalscript 。ExifTool/Perl和Pascal组件内嵌在插件中，使用时无需另装。
 
-构建缓存位于工作区 temp/LiteLaunchBatchRenamer-build-1.0.5，交付位于 outputs/LiteLaunchBatchRenamer/1.0.5。验证入口为 qa/run-batch-form.ps1、qa/run-batch.ps1 和 qa/advanced_worker_test.py。
+构建缓存位于工作区 temp/LiteLaunchBatchRenamer-build-1.0.6，交付位于 outputs/LiteLaunchBatchRenamer/1.0.6。验证入口为 qa/run-batch-form.ps1、qa/run-batch.ps1 和 qa/advanced_worker_test.py。
 
-插件独立发布 batch-renamer-v1.0.5，基座保持1.0.31。按用户长期授权直接安装、发布GitHub，实际下载核验后清理旧版，保留用户数据与Git历史。自动验证与人工使用分别记录。
+插件独立发布 batch-renamer-v1.0.6，基座保持1.0.31。按用户长期授权直接安装、发布GitHub，实际下载核验后清理旧版，保留用户数据与Git历史。自动验证与人工使用分别记录。

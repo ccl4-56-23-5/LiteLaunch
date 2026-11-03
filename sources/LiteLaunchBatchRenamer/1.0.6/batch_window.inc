@@ -1,11 +1,12 @@
 ﻿// Members of EverWindow, compiled only into the standalone Batch Renamer plugin.
 enum { BR_RULES=2000,BR_FILES,BR_HEADING,BR_MANUAL,BR_ADD,BR_EDIT,BR_UP,BR_DOWN,BR_DELETE,BR_CLEAR,BR_PREVIEW,BR_SAVE,BR_LOAD,BR_LEGACY,
- BR_SIMPLE,BR_ADVANCED,BR_QADD,BR_QDELETE,BR_QREPLACE,BR_QNUMBER,BR_QUPPER,BR_QLOWER,BR_QSPACE,BR_QRESTORE,BR_QUNDO,BR_QREDO };
+ BR_SIMPLE,BR_ADVANCED,BR_QADD,BR_QDELETE,BR_QREPLACE,BR_QNUMBER,BR_QUPPER,BR_QLOWER,BR_QSPACE,BR_QRESTORE,BR_QUNDO,BR_QREDO,BR_SORT,BR_SORTDIR };
 std::vector<batch::Step> ruleStack;
 bool batchSimple=true;
 bool batchUpdating=false;
 bool batchLegacyAction=false;
 std::wstring lastRulePreview;
+#include "batch_sort.inc"
 HFONT batchTitleFont=nullptr;
 HIMAGELIST batchRowImages=nullptr;
 RECT batchRuleCard={},batchTableCard={},batchEditCard={};
@@ -36,7 +37,8 @@ void batchPaint(HDC dc,const RECT&client){
     batchText(dc,batchSimple?L"点选工具，直接处理当前预览":L"从上到下执行 · 勾选启用",{x,y+px(82),batchRuleCard.right-px(12),y+px(105)},UI_MUTED);
     x=batchTableCard.left+px(18);y=batchTableCard.top;
     batchText(dc,L"文件预览",{x,y+px(12),x+px(150),y+px(39)},UI_INK,titleFont);
-    batchText(dc,std::to_wstring(items.size())+L" 个项目",{x+px(100),y+px(14),x+px(250),y+px(38)},UI_MUTED);
+    batchText(dc,std::to_wstring(items.size())+L" 个项目",{x+px(100),y+px(14),x+px(190),y+px(38)},UI_MUTED);
+    batchText(dc,L"排序",{batchTableCard.right-px(320),y+px(12),batchTableCard.right-px(278),y+px(42)},UI_MUTED);
     int available=batchTableCard.right-batchTableCard.left-px(36),col=(available-px(116))/2;
     RECT strip={x,y+px(53),batchTableCard.right-px(18),y+px(85)};eRoundRect(dc,strip,px(7),UI_SURFACE_ALT,UI_SURFACE_ALT);
     batchText(dc,L"原名称",{x+px(12),strip.top,x+col,strip.bottom},UI_MUTED);
@@ -163,6 +165,7 @@ bool batchSavePreset(const std::wstring&name){
 }
 void batchFolderMenu(){HMENU menu=CreatePopupMenu();AppendMenuW(menu,MF_STRING,1,L"选择多个文件夹（重命名文件夹本身）…");AppendMenuW(menu,MF_STRING,2,L"选择父目录，批量添加直接子文件夹…");RECT r;GetWindowRect(ctl(EE_FOLDER),&r);int id=TrackPopupMenu(menu,TPM_RETURNCMD,r.left,r.bottom,0,window,nullptr);DestroyMenu(menu);if(id)choose(true,id==2);}
 void batchCommand(int id){
+    if(id==BR_SORTDIR){batchSortChanged(true);return;}
     int selected=batchSelection();
     if(id==BR_SIMPLE||id==BR_ADVANCED){batchMode(id==BR_SIMPLE);return;}
     if(id>=BR_QADD&&id<=BR_QREDO){batchQuick(id);return;}
@@ -185,6 +188,9 @@ void batchControls(){
     batchSimple=eSetting(L"BatchSimple",L"1")==L"1";
     auto label=[&](int id,const wchar_t*text){HWND h=CreateWindowW(L"STATIC",text,WS_CHILD|WS_VISIBLE,0,0,0,0,window,(HMENU)(INT_PTR)id,GetModuleHandleW(nullptr),nullptr);SendMessageW(h,WM_SETFONT,(WPARAM)font,TRUE);};
     label(BR_HEADING,L"文件预览 · 原名称 → 新名称");label(BR_MANUAL,L"手工编辑预览名称（每行对应一个项目；Ctrl+Z撤销）");
+    HWND sort=CreateWindowW(L"COMBOBOX",L"",WS_CHILD|WS_VISIBLE|WS_TABSTOP|CBS_DROPDOWNLIST|WS_VSCROLL,0,0,0,0,window,(HMENU)BR_SORT,GetModuleHandleW(nullptr),nullptr);
+    SendMessageW(sort,WM_SETFONT,(WPARAM)font,TRUE);for(const auto&label:batchSortLabels())SendMessageW(sort,CB_ADDSTRING,0,(LPARAM)label.c_str());
+    HWND direction=CreateWindowW(L"BUTTON",L"正序 ↑",WS_CHILD|WS_VISIBLE|WS_TABSTOP|BS_OWNERDRAW,0,0,0,0,window,(HMENU)BR_SORTDIR,GetModuleHandleW(nullptr),nullptr);SendMessageW(direction,WM_SETFONT,(WPARAM)font,TRUE);eTrackHover(direction,&hot);batchSyncSortControls();
     HWND rules=CreateWindowExW(0,WC_LISTVIEWW,L"",WS_CHILD|WS_VISIBLE|WS_TABSTOP|LVS_REPORT|LVS_SINGLESEL|LVS_SHOWSELALWAYS|LVS_NOCOLUMNHEADER,0,0,0,0,window,(HMENU)BR_RULES,GetModuleHandleW(nullptr),nullptr);
     ListView_SetExtendedListViewStyle(rules,LVS_EX_FULLROWSELECT|LVS_EX_CHECKBOXES|LVS_EX_DOUBLEBUFFER|LVS_EX_LABELTIP);LVCOLUMNW column={};column.mask=LVCF_TEXT|LVCF_WIDTH;column.pszText=(LPWSTR)L"规则队列 · 从上到下执行";column.cx=px(240);ListView_InsertColumn(rules,0,&column);SendMessageW(rules,WM_SETFONT,(WPARAM)font,TRUE);
     HWND files=CreateWindowExW(0,WC_LISTVIEWW,L"",WS_CHILD|WS_VISIBLE|WS_TABSTOP|LVS_REPORT|LVS_SINGLESEL|LVS_SHOWSELALWAYS|LVS_NOCOLUMNHEADER,0,0,0,0,window,(HMENU)BR_FILES,GetModuleHandleW(nullptr),nullptr);ListView_SetExtendedListViewStyle(files,LVS_EX_FULLROWSELECT|LVS_EX_DOUBLEBUFFER);
@@ -219,6 +225,7 @@ void batchLayout(int width,int height){
     y+=px(39);int listBottom=bottom-px(114);move(BR_RULES,x,y,left-px(32),std::max(px(20),listBottom-y));ListView_SetColumnWidth(ctl(BR_RULES),0,left-px(34));
     const int presets[]={BR_PREVIEW,BR_LEGACY,BR_SAVE,BR_LOAD};const wchar_t*names[]={L"刷新预览",L"旧版记忆",L"保存预设",L"载入预设"};
     for(int i=0;i<4;i++){SetWindowTextW(ctl(presets[i]),names[i]);move(presets[i],x+(i%2)*px(124),bottom-px(96)+(i/2)*px(40),px(114),px(32));}
+    move(BR_SORT,batchTableCard.right-px(274),top+px(13),px(156),px(260));move(BR_SORTDIR,batchTableCard.right-px(110),top+px(12),px(92),px(30));
     int col=(available-px(36)-px(116))/2;move(BR_FILES,right+px(18),top+px(88),available-px(36),std::max(px(24),tableHeight-px(104)));
     ListView_SetColumnWidth(ctl(BR_FILES),0,col);ListView_SetColumnWidth(ctl(BR_FILES),1,col);ListView_SetColumnWidth(ctl(BR_FILES),2,px(108));
     move(EE_FIND,width-margin-px(116),batchEditCard.top+px(12),px(98),px(29));SetWindowTextW(ctl(EE_FIND),L"查找替换");

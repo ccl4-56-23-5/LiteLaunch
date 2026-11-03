@@ -3,20 +3,20 @@
     {
       "id": "batch-renamer",
       "name": "批量重命名",
-      "version": "1.0.5",
+      "version": "1.0.6",
       "minHostVersion": "1.0.24",
-      "releaseTag": "batch-renamer-v1.0.5",
-      "asset": "LiteLaunch-Plugin-BatchRenamer-1.0.5-x64.exe",
+      "releaseTag": "batch-renamer-v1.0.6",
+      "asset": "LiteLaunch-Plugin-BatchRenamer-1.0.6-x64.exe",
       "productName": "LiteLaunch Batch Renamer",
-      "description": "默认末尾插入、中文单页规则、选择式文件信息与内容预览",
-      "sha256": "27EFBF9C7E2EC40FEDE5793FADAD265CDE5D4A9CDAFB321C6A8CA6673FED7630"
+      "description": "按名称/拍摄时间/文件时间正序倒序，编号跟随排序",
+      "sha256": "0778A34E70EAE8E143D837A3CE9F88DD59DE66534442AADCC0F99BE7E38F442B"
     },
     {
       "id": "cursor-switcher",
       "name": "鼠标指针样式",
       "version": "1.0.1",
       "minHostVersion": "1.0.24",
-      "releaseTag": "batch-renamer-v1.0.5",
+      "releaseTag": "batch-renamer-v1.0.6",
       "asset": "LiteLaunch-Plugin-CursorSwitcher-1.0.1-x64.exe",
       "productName": "LiteLaunch Cursor Switcher",
       "description": "仅显示后装方案，快速切换与恢复上一套",
