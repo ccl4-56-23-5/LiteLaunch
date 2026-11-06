@@ -1,8 +1,4 @@
-﻿param([string]$Compiler=(Join-Path $PSScriptRoot 'tools\zig\zig-x86_64-windows-0.15.2\zig.exe'),[string]$InnoCompiler='C:\Program Files (x86)\Inno Setup 6\ISCC.exe',[string]$ApplicationExe)
+﻿param([string]$Compiler,[string]$InnoCompiler,[string]$ApplicationExe,[switch]$ReusePluginPackages)
 $ErrorActionPreference='Stop'
-if(-not $ApplicationExe){
- $payload=Join-Path $PSScriptRoot 'temp\LiteLaunch-installer\payload-1.0.31'
- & "$PSScriptRoot\sources\LiteLaunch\1.0.31\build.ps1" -Compiler $Compiler -OutputDirectory $payload
- $ApplicationExe=Join-Path $payload 'LiteLaunch.exe'
-}
-& "$PSScriptRoot\sources\LiteLaunch\1.0.31\build-installer.ps1" -InnoCompiler $InnoCompiler -ApplicationExe $ApplicationExe
+$source=Join-Path $PSScriptRoot 'sources\LiteLaunch\1.0.32'
+& "$source\build-installer.ps1" -Compiler $Compiler -InnoCompiler $InnoCompiler -ApplicationExe $ApplicationExe -ReusePluginPackages:$ReusePluginPackages
